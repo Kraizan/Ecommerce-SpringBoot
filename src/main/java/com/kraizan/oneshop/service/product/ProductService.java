@@ -5,7 +5,7 @@ import java.util.Optional;
 
 import org.springframework.stereotype.Service;
 
-import com.kraizan.oneshop.exceptions.ProductNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
 import com.kraizan.oneshop.model.Category;
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.repository.CategoryRepository;
@@ -45,7 +45,7 @@ public class ProductService implements IProductService {
 
     @Override
     public Product getProductById(Long id) {
-        return productRepository.findById(id).orElseThrow(() -> new ProductNotFoundExpception("Product not found!"));
+        return productRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExpception("Product not found!"));
     }
 
     @Override
@@ -53,7 +53,7 @@ public class ProductService implements IProductService {
         return productRepository.findById(id)
                 .map((existingProduct) -> updateExistingProduct(existingProduct, product))
                 .map(productRepository :: save)
-                .orElseThrow(() -> new ProductNotFoundExpception("Product not found!"));
+                .orElseThrow(() -> new ResourceNotFoundExpception("Product not found!"));
     }
 
     private Product updateExistingProduct(Product existingProduct, ProductUpdateRequest request){
@@ -73,7 +73,7 @@ public class ProductService implements IProductService {
     public void deleteProductById(Long id) {
         productRepository.findById(id)
                 .ifPresentOrElse(productRepository::delete,
-                        () -> {throw new ProductNotFoundExpception("Product not found!");});
+                        () -> {throw new ResourceNotFoundExpception("Product not found!");});
     }
 
     @Override
