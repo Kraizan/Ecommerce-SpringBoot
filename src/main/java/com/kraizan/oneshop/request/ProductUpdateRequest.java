@@ -1,9 +1,10 @@
 package com.kraizan.oneshop.request;
 
-import com.kraizan.oneshop.model.Category;
-import lombok.Data;
-
 import java.math.BigDecimal;
+
+import com.kraizan.oneshop.model.Category;
+
+import lombok.Data;
 
 @Data
 public class ProductUpdateRequest {

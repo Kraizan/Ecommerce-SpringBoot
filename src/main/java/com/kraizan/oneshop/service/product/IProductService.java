@@ -1,10 +1,10 @@
 package com.kraizan.oneshop.service.product;
 
+import java.util.List;
+
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.request.AddProductRequest;
 import com.kraizan.oneshop.request.ProductUpdateRequest;
-
-import java.util.List;
 
 public interface IProductService {
     Product addProduct(AddProductRequest product);
