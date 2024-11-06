@@ -10,6 +10,6 @@ import com.kraizan.oneshop.model.Image;
 public interface IImageService {
     Image getImageById(Long id);
     void deleteImageById(Long id);
-    List<ImageDto> saveImage(List<MultipartFile> files, Long productId);
+    List<ImageDto> saveImages(List<MultipartFile> files, Long productId);
     Image updateImage(MultipartFile file, Long id);
 }
