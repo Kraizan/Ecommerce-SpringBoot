@@ -2,6 +2,7 @@ package com.kraizan.oneshop.service.product;
 
 import java.util.List;
 
+import com.kraizan.oneshop.dto.ProductDto;
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.request.AddProductRequest;
 import com.kraizan.oneshop.request.ProductUpdateRequest;
@@ -18,4 +19,6 @@ public interface IProductService {
     List<Product> getProductsByName(String name);
     List<Product> getProductsByBrandAndName(String brand, String name);
     Long countProductsByBrandAndName(String brand, String name);
+    List<ProductDto> getConvertedProductDtos(List<Product> products);
+    ProductDto convertToDto(Product product);
 }

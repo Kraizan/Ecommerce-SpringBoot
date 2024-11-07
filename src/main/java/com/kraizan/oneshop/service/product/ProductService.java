@@ -3,12 +3,17 @@ package com.kraizan.oneshop.service.product;
 import java.util.List;
 import java.util.Optional;
 
+import org.modelmapper.ModelMapper;
 import org.springframework.stereotype.Service;
 
+import com.kraizan.oneshop.dto.ImageDto;
+import com.kraizan.oneshop.dto.ProductDto;
 import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
 import com.kraizan.oneshop.model.Category;
+import com.kraizan.oneshop.model.Image;
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.repository.CategoryRepository;
+import com.kraizan.oneshop.repository.ImageRepository;
 import com.kraizan.oneshop.repository.ProductRepository;
 import com.kraizan.oneshop.request.AddProductRequest;
 import com.kraizan.oneshop.request.ProductUpdateRequest;
@@ -20,19 +25,17 @@ import lombok.RequiredArgsConstructor;
 public class ProductService implements IProductService {
     private final ProductRepository productRepository;
     private final CategoryRepository categoryRepository;
+    private final ImageRepository imageRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public Product addProduct(AddProductRequest request) {
-        System.out.println(request);
         Category category = Optional.ofNullable(categoryRepository.findByName(request.getCategory().getName()))
                 .orElseGet(()->{
-                    System.out.println(request.getCategory());
                     Category newCategory = new Category(request.getCategory().getName());
-                    System.out.println(newCategory);
                     return categoryRepository.save(newCategory);
                 });
         request.setCategory(category);
-        System.out.println(request);
         return productRepository.save(createProduct(request));
     }
 
@@ -113,5 +116,23 @@ public class ProductService implements IProductService {
     @Override
     public Long countProductsByBrandAndName(String brand, String name) {
         return productRepository.countByBrandAndName(brand, name);
+    }
+
+    @Override
+    public List<ProductDto> getConvertedProductDtos(List<Product> products){
+        return products.stream()
+                .map(this::convertToDto)
+                .toList();
+    }
+
+    @Override
+    public ProductDto convertToDto(Product product){
+        ProductDto productDto = modelMapper.map(product, ProductDto.class);
+        List<Image> images = imageRepository.findByProductId(product.getId());
+        List<ImageDto> imageDtos = images.stream()
+                .map(image -> modelMapper.map(image, ImageDto.class))
+                .toList();
+        productDto.setImages(imageDtos);
+        return productDto;
     }
 }
