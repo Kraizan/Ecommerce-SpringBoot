@@ -11,7 +11,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
 import com.kraizan.oneshop.dto.ImageDto;
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Image;
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.repository.ImageRepository;
@@ -27,7 +27,7 @@ public class ImageService implements IImageService {
 
     @Override
     public Image getImageById(Long id) {
-        return imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExpception("Image not found"));
+        return imageRepository.findById(id).orElseThrow(() -> new ResourceNotFoundException("Image not found"));
     }
 
     @Override
@@ -35,7 +35,7 @@ public class ImageService implements IImageService {
         imageRepository.findById(id).ifPresentOrElse(image -> {
             imageRepository.delete(image);
         }, () -> {
-            throw new ResourceNotFoundExpception("Image not found");
+            throw new ResourceNotFoundException("Image not found");
         });
     }
 

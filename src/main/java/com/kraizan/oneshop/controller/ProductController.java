@@ -15,7 +15,7 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kraizan.oneshop.dto.ProductDto;
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Product;
 import com.kraizan.oneshop.request.AddProductRequest;
 import com.kraizan.oneshop.request.ProductUpdateRequest;
@@ -47,7 +47,7 @@ public class ProductController {
             Product product = productService.getProductById(productId);
             ProductDto productDto = productService.convertToDto(product);
             return ResponseEntity.ok(new ApiResponse("success", productDto));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Product not found", e.getMessage()));
         } catch (Exception e) {
@@ -74,7 +74,7 @@ public class ProductController {
             Product updatedProduct = productService.updateProduct(productId, product);
             ProductDto productDto = productService.convertToDto(updatedProduct);
             return ResponseEntity.ok(new ApiResponse("Product updated successfully", productDto));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Product not found", e.getMessage()));
         } catch (Exception e) {
@@ -88,7 +88,7 @@ public class ProductController {
         try {
             productService.deleteProductById(productId);
             return ResponseEntity.ok(new ApiResponse("Product deleted successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Product not found", e.getMessage()));
         } catch (Exception e) {

@@ -3,8 +3,9 @@ package com.kraizan.oneshop.service.cart;
 import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Cart;
 import com.kraizan.oneshop.repository.CartItemRepository;
 import com.kraizan.oneshop.repository.CartRepository;
@@ -19,10 +20,14 @@ public class CartService implements ICartService {
 
     @Override
     public Cart getCart(Long id) {
-        Cart cart = cartRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExpception("Cart not found"));
-        return cart;
+        Cart cart = cartRepository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Cart not found"));
+        BigDecimal totalAmount = cart.getTotalAmount();
+        cart.setTotalAmount(totalAmount);
+        return cartRepository.save(cart);
     }
 
+    @Transactional
     @Override
     public void clearCart(Long id) {
         Cart cart = getCart(id);
@@ -36,5 +41,4 @@ public class CartService implements ICartService {
         Cart cart = getCart(id);
         return cart.getTotalAmount();
     }
-
 }

@@ -4,7 +4,7 @@ import java.math.BigDecimal;
 
 import org.springframework.stereotype.Service;
 
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Cart;
 import com.kraizan.oneshop.model.CartItem;
 import com.kraizan.oneshop.model.Product;
@@ -58,15 +58,20 @@ public class CartItemService implements ICartItemService {
     @Override
     public void updateCartItem(Long cartId, Long productId, Integer quantity) {
         Cart cart = cartService.getCart(cartId);
-        cart.getCartItems().stream()
+        cart.getCartItems()
+                .stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
                 .ifPresent(item -> {
-                        item.setQuantity(quantity);
-                        item.setUnitPrice(item.getProduct().getPrice());
-                        item.setTotalPrice();
-                        cartRepository.save(cart);
-                    });
+                    item.setQuantity(quantity);
+                    item.setUnitPrice(item.getProduct().getPrice());
+                    item.setTotalPrice();
+                });
+        BigDecimal totalAmount = cart.getCartItems()
+                .stream().map(CartItem ::getTotalPrice)
+                .reduce(BigDecimal.ZERO, BigDecimal::add);
+
+        cart.setTotalAmount(totalAmount);
         cartRepository.save(cart);
     }
 
@@ -76,6 +81,6 @@ public class CartItemService implements ICartItemService {
         return cart.getCartItems().stream()
                 .filter(item -> item.getProduct().getId().equals(productId))
                 .findFirst()
-                .orElseThrow(() -> new ResourceNotFoundExpception("Cart item not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Cart item not found"));
     }
 }

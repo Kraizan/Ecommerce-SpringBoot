@@ -9,7 +9,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.response.ApiResponse;
 import com.kraizan.oneshop.service.cart.ICartItemService;
 
@@ -27,7 +27,7 @@ public class CartItemController {
         try {
             cartItemService.addCartItem(cartId, productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Cart item added successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -39,7 +39,7 @@ public class CartItemController {
         try {
             cartItemService.removeCartItem(cartId, productId);
             return ResponseEntity.ok(new ApiResponse("Cart item removed successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -52,7 +52,7 @@ public class CartItemController {
         try {
             cartItemService.updateCartItem(cartId, productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Cart item updated successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));

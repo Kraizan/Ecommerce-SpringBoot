@@ -14,7 +14,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kraizan.oneshop.exceptions.AlreadyExistsException;
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Category;
 import com.kraizan.oneshop.response.ApiResponse;
 import com.kraizan.oneshop.service.category.ICategoryService;
@@ -57,7 +57,7 @@ public class CategoryController {
         try {
             Category category = categoryService.getCategoryById(categoryId);
             return ResponseEntity.ok(new ApiResponse("Category retrieved successfully", category));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Category not found", e.getMessage()));
         } catch (Exception e) {
@@ -71,7 +71,7 @@ public class CategoryController {
         try {
             Category category = categoryService.getCategoryByName(categoryName);
             return ResponseEntity.ok(new ApiResponse("Category retrieved successfully", category));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Category not found", e.getMessage()));
         } catch (Exception e) {
@@ -85,7 +85,7 @@ public class CategoryController {
         try {
             categoryService.deleteCategoryById(categoryId);
             return ResponseEntity.ok(new ApiResponse("Category deleted successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Category not found", e.getMessage()));
         } catch (Exception e) {
@@ -99,7 +99,7 @@ public class CategoryController {
         try {
             Category updatedCategory = categoryService.updateCategory(category, categoryId);
             return ResponseEntity.ok(new ApiResponse("Category updated successfully", updatedCategory));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND)
                     .body(new ApiResponse("Category not found", e.getMessage()));
         } catch (Exception e) {

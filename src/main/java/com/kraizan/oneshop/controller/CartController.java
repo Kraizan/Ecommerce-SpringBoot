@@ -10,7 +10,7 @@ import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
-import com.kraizan.oneshop.exceptions.ResourceNotFoundExpception;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.Cart;
 import com.kraizan.oneshop.response.ApiResponse;
 import com.kraizan.oneshop.service.cart.ICartService;
@@ -28,7 +28,7 @@ public class CartController {
         try {
             Cart cart = cartService.getCart(cartId);
             return ResponseEntity.ok(new ApiResponse("Cart retrieved successfully", cart));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -40,7 +40,7 @@ public class CartController {
         try {
             cartService.clearCart(cartId);
             return ResponseEntity.ok(new ApiResponse("Cart cleared successfully", null));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
@@ -52,7 +52,7 @@ public class CartController {
         try {
             BigDecimal totalPrice = cartService.getTotalPrice(cartId);
             return ResponseEntity.ok(new ApiResponse("Total amount retrieved successfully", totalPrice));
-        } catch (ResourceNotFoundExpception e) {
+        } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
         } catch (Exception e) {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).body(new ApiResponse(e.getMessage(), null));
