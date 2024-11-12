@@ -1,40 +1,66 @@
 package com.kraizan.oneshop.service.user;
 
+import java.util.Optional;
+
+import org.modelmapper.ModelMapper;
+import org.springframework.stereotype.Service;
+
 import com.kraizan.oneshop.dto.UserDto;
+import com.kraizan.oneshop.exceptions.AlreadyExistsException;
+import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
 import com.kraizan.oneshop.model.User;
+import com.kraizan.oneshop.repository.UserRepository;
 import com.kraizan.oneshop.request.CreateUserRequest;
 import com.kraizan.oneshop.request.UpdateUserRequest;
 
-public class UserService implements IUserService{
+import lombok.RequiredArgsConstructor;
+
+@Service
+@RequiredArgsConstructor
+public class UserService implements IUserService {
+    private final UserRepository userRepository;
+    private final ModelMapper modelMapper;
 
     @Override
     public User getUserById(Long userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'getUserById'");
+        return userRepository.findById(userId)
+                .orElseThrow(() -> new ResourceNotFoundException("User not found!"));
     }
 
     @Override
     public User createUser(CreateUserRequest request) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'createUser'");
+        return  Optional.of(request)
+                .filter(user -> !userRepository.existsByEmail(request.getEmail()))
+                .map(req -> {
+                    User user = new User();
+                    user.setEmail(request.getEmail());
+                    user.setPassword(request.getPassword());
+                    user.setFirstName(request.getFirstName());
+                    user.setLastName(request.getLastName());
+                    return  userRepository.save(user);
+                }) .orElseThrow(() -> new AlreadyExistsException("Oops!" +request.getEmail() +" already exists!"));
     }
 
     @Override
     public User updateUser(UpdateUserRequest request, Long userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'updateUser'");
+        return  userRepository.findById(userId).map(existingUser ->{
+            existingUser.setFirstName(request.getFirstName());
+            existingUser.setLastName(request.getLastName());
+            return userRepository.save(existingUser);
+        }).orElseThrow(() -> new ResourceNotFoundException("User not found!"));
+
     }
 
     @Override
     public void deleteUser(Long userId) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'deleteUser'");
+        userRepository.findById(userId).ifPresentOrElse(userRepository :: delete, () ->{
+            throw new ResourceNotFoundException("User not found!");
+        });
     }
 
     @Override
     public UserDto convertUserToDto(User user) {
-        // TODO Auto-generated method stub
-        throw new UnsupportedOperationException("Unimplemented method 'convertUserToDto'");
+        return modelMapper.map(user, UserDto.class);
     }
-
+    
 }
