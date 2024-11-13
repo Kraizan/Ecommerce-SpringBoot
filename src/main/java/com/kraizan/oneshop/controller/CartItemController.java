@@ -10,8 +10,12 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
 import com.kraizan.oneshop.exceptions.ResourceNotFoundException;
+import com.kraizan.oneshop.model.Cart;
+import com.kraizan.oneshop.model.User;
 import com.kraizan.oneshop.response.ApiResponse;
 import com.kraizan.oneshop.service.cart.ICartItemService;
+import com.kraizan.oneshop.service.cart.ICartService;
+import com.kraizan.oneshop.service.user.IUserService;
 
 import lombok.RequiredArgsConstructor;
 
@@ -20,12 +24,15 @@ import lombok.RequiredArgsConstructor;
 @RequestMapping("${api.prefix}/cartItems")
 public class CartItemController {
     private final ICartItemService cartItemService;
+    private final ICartService cartService;
+    private final IUserService userService;
 
     @PostMapping
-    public ResponseEntity<ApiResponse> addCartItem(@RequestParam Long cartId, @RequestParam Long productId,
-            @RequestParam Integer quantity) {
+    public ResponseEntity<ApiResponse> addCartItem(@RequestParam Long productId, @RequestParam Integer quantity) {
         try {
-            cartItemService.addCartItem(cartId, productId, quantity);
+            User user = userService.getUserById(1L);
+            Cart cart = cartService.initializeNewCart(user);
+            cartItemService.addCartItem(cart.getId(), productId, quantity);
             return ResponseEntity.ok(new ApiResponse("Cart item added successfully", null));
         } catch (ResourceNotFoundException e) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).body(new ApiResponse(e.getMessage(), null));
