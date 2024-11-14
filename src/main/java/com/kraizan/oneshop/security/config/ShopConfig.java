@@ -1,5 +1,7 @@
 package com.kraizan.oneshop.security.config;
 
+import static org.springframework.boot.autoconfigure.security.servlet.PathRequest.toH2Console;
+
 import java.util.List;
 
 import org.modelmapper.ModelMapper;
@@ -11,6 +13,7 @@ import org.springframework.security.config.annotation.authentication.configurati
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configurers.AbstractHttpConfigurer;
+import org.springframework.security.config.annotation.web.configurers.HeadersConfigurer.FrameOptionsConfig;
 import org.springframework.security.config.http.SessionCreationPolicy;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
@@ -28,7 +31,7 @@ import lombok.RequiredArgsConstructor;
 @Configuration
 public class ShopConfig {
     private final ShopUserDetailsService shopUserDetailsService;
-    private final JwtAuthEntryPoint jwtAuthEntryPoint;
+    private JwtAuthEntryPoint jwtAuthEntryPoint;
 
     private static final List<String> SECURED_URLS = List.of("/api/v1/carts/**", "/api/v1/cartItems/**");
     
@@ -65,8 +68,11 @@ public class ShopConfig {
         http.csrf(AbstractHttpConfigurer::disable)
             .exceptionHandling(exception -> exception.authenticationEntryPoint(jwtAuthEntryPoint))
             .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
-            .authorizeHttpRequests(auth -> auth.requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
-            .anyRequest().permitAll());
+            .authorizeHttpRequests(auth -> auth
+                .requestMatchers(toH2Console()).permitAll()
+                .requestMatchers(SECURED_URLS.toArray(String[]::new)).authenticated()
+            .anyRequest().permitAll())
+            .headers(headers -> headers.frameOptions(FrameOptionsConfig::disable));
         http.authenticationProvider(daoAuthenticationProvider());
         http.addFilterBefore(authTokenFilter(), UsernamePasswordAuthenticationFilter.class);
         return http.build();
